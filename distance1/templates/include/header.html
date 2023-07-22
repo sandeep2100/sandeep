@@ -1,0 +1,62 @@
+
+{% load static %}
+
+
+<body style="background-color:#f7fcff">
+
+<!-- Header START -->
+<header class="navbar-light header-sticky">
+	<!-- Logo Nav START -->
+	<nav class="navbar navbar-expand-xl">
+		<div class="container">
+			<!-- Logo START -->
+			<a class="navbar-brand" href="{% url 'index' %}">
+				<img class="light-mode-item navbar-brand-item" src="{% static 'assets/images/logo.svg' %}" alt="logo">
+				<img class="dark-mode-item navbar-brand-item" src="{% static 'assets/images/logo-light.svg' %}" alt="logo">
+			</a>
+			<!-- Logo END -->
+
+			<!-- Buttons START -->
+			<ul class="nav flex-row align-items-center list-unstyled ms-xl-auto">
+
+				<!-- Download app -->
+				<li class="nav-item align-items-center d-none d-sm-flex position-relative me-sm-3">
+					<!-- Icon -->
+					<a href="#" class="icon-md btn btn-light mb-0 p-0 flex-shrink-0"><i class="bi bi-whatsapp"></i></a>
+					<div class="ms-2 d-none d-md-block">
+						<h6 class="mb-0"><a href="tel:+91-93751 44444" class="stretched-link">+91-93751 44444</a></h6>
+					</div>
+				</li>
+
+
+
+				<!-- Login button START -->
+				<!--{% if user.is_authenticated %}
+	            <li class="nav-item ms-3">
+					<a class="btn btn-sm btn-primary mb-0" href="{% url 'logout_view' %}"><i class="fa-solid fa-right-to-bracket me-2"></i>Logout</a>
+				</li>
+				<p>{{user.username}}</p>
+					{% else %}
+				<li class="nav-item ms-3">
+					<a class="btn btn-sm btn-primary mb-0" href="{% url 'login' %}"><i class="fa-solid fa-right-to-bracket me-2"></i>Login</a>
+				</li>
+
+				{% endif %} -->
+				<!-- Login button END -->
+			</ul>
+			<!-- Buttons START -->
+
+		</div>
+
+	</nav>
+	<!-- Logo Nav END -->
+
+</header>
+
+</body>
+
+
+
+
+
+

@@ -1,0 +1,768 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+
+
+<!-- =======================
+Search START -->
+
+<!-- =======================
+Search START -->
+
+<!-- =======================
+Titles START -->
+<section class="pt-6">
+	<div class="container position-relative">
+
+		<!-- Title and button START -->
+		<div class="row">
+			<div class="col-12"><a type="button" style="float:right" class="btn btn-success" href="{% url 'index' %}">Update</a>
+				<div class="d-sm-flex justify-content-sm-between align-items-center">
+					<!-- Title -->
+					<div class="mb-2 mb-sm-0">
+						<h2 class="fs-4 mb-2">{{source|join:" "}}  {{destination|join:" "}} {{localcity}}</h2>
+
+						<!-- Divider -->
+						<ul class="nav nav-divider h6 mb-0">
+
+							<li class="nav-item">{{trip_type}}</li>
+
+							<li class="nav-item">{{distance}} Km</li>
+							<li class="nav-item">2 Adults</li>
+
+						</ul>
+
+					</div>
+
+
+				</div>
+			</div>
+		</div>
+		<!-- Title and button END -->
+
+	</div>
+</section>
+
+
+<div class="modal fade" id="popup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+
+	<div class="modal-content">
+		<div class="modal-body">
+			<div class="container">
+		<div class="row">
+			<div class="col-12">
+				<!-- Booking from START -->
+				<div class="form-control-bg-light bg-mode border p-4 rounded-3">
+					<div class="row g-4">
+
+						<!-- Nav tabs START -->
+						<div class="col-lg-6">
+							<div class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+								<div class="form-check form-check-inline active" id="cab-one-way-tab" data-bs-toggle="pill" data-bs-target="#cab-one-way" role="tab" aria-controls="cab-one-way" aria-selected="true">
+									<input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadiocab1" value="option1" checked>
+									<label class="form-check-label" for="inlineRadiocab1">One Way</label>
+								</div>
+								<div class="form-check form-check-inline" id="cab-round-way-tab" data-bs-toggle="pill" data-bs-target="#cab-round-way" role="tab" aria-controls="cab-round-way" aria-selected="false">
+									<input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadiocab2" value="option2">
+									<label class="form-check-label" for="inlineRadiocab2">Round Trip</label>
+								</div>
+							</div>
+						</div>
+						<!-- Nav tabs END -->
+					</div>
+
+					<!-- Tab content START -->
+					<div class="tab-content mt-0" id="pills-tabContent">
+						<!-- One way tab START -->
+						<div class="tab-pane fade show active" id="cab-one-way" role="tabpanel" aria-labelledby="cab-one-way-tab">
+							<form method="post" action="{% url 'calculate-fare' %}" class="row g-4 align-items-center">
+								{% csrf_token %}
+								<div class="col-xl-10">
+									<div class="row g-4">
+										<!-- Pickup -->
+										<div class="col-md-6 col-xl-4">
+											<div class="form-size-lg">
+												<label class="form-label">Pickup city</label>
+												<input id="source" value="{{source}}" name="source" class="form-select" data-search-enabled="true" aria-label=".form-select-sm">
+
+											</div>
+										</div>
+
+										<!-- Drop -->
+										<div class="col-md-6 col-xl-4">
+											<div class="form-size-lg">
+												<label class="form-label">Drop city</label>
+												<input id="destination" name="destination" value="{{destination}}" class="form-select" data-search-enabled="true" aria-label=".form-select-sm">
+
+											</div>
+										</div>
+
+										<!-- Date -->
+										<div class="col-md-6 col-xl-2">
+											<label class="form-label">Pickup Date</label>
+											<input type="text" class="form-control form-control-lg flatpickr" value="{{date}}" placeholder="Select date" required>
+										</div>
+
+										<!-- Time -->
+										<div class="col-md-6 col-xl-2">
+											<label class="form-label">Pickup time</label>
+											<input type="text" class="form-control form-control-lg flatpickr" value="{{time}}" data-enableTime="true" data-noCalendar="true" placeholder="Select time" required>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-xl-2 d-grid mt-xl-auto">
+									<button type="submit" class="btn btn-lg btn-primary mb-0">Update</button>
+								</div>
+							</form>
+						</div>
+						<!-- One way tab END -->
+
+						<!-- Round way tab END -->
+						<div class="tab-pane fade" id="cab-round-way" role="tabpanel" aria-labelledby="cab-round-way-tab">
+							<form class="row g-4 align-items-center">
+								<div class="col-xl-12">
+									<div class="row g-4">
+										<!-- Leaving From -->
+										<div class="col-md-6 col-xl-6">
+											<div class="form-size-lg">
+												<label class="form-label">Pickup</label>
+												<select class="form-select js-choice" data-search-enabled="true" aria-label=".form-select-sm">
+													<option value="">Select location</option></select>
+
+											</div>
+										</div>
+
+										<!-- Going To -->
+										<div class="col-md-6 col-xl-6">
+											<div class="form-size-lg">
+												<label class="form-label">Drop</label>
+												<select class="form-select js-choice" data-search-enabled="true" aria-label=".form-select-sm">
+													<option value="">Select location</option>
+
+												</select>
+											</div>
+										</div>
+
+										<!-- Date -->
+										<div class="col-md-6 col-xl-3">
+											<label class="form-label">Pickup Date</label>
+											<input type="text" class="form-control form-control-lg flatpickr" placeholder="Select date">
+										</div>
+
+										<!-- Time -->
+										<div class="col-md-6 col-xl-3">
+											<label class="form-label">Pickup time</label>
+											<input type="text" class="form-control form-control-lg flatpickr" data-enableTime="true" data-noCalendar="true" placeholder="Select time">
+										</div>
+
+										<!-- Date -->
+										<div class="col-md-6 col-xl-3">
+											<label class="form-label">Return Date</label>
+											<input type="text" class="form-control form-control-lg flatpickr" placeholder="Select date">
+										</div>
+
+										<!-- Time -->
+										<div class="col-md-6 col-xl-3">
+											<label class="form-label">Return time</label>
+											<input type="text" class="form-control form-control-lg flatpickr" data-enableTime="true" data-noCalendar="true" placeholder="Select time">
+										</div>
+									</div>
+								</div>
+
+								<div class="col-xl-2">
+									<a  class="btn btn-lg btn-primary w-100 mb-0" href="#">Update</a>
+								</div>
+							</form>
+						</div>
+						<!-- Round way tab END -->
+					</div>
+					<!-- Tab content END -->
+				</div>
+				<!-- Booking from END -->
+			</div>
+		</div>
+	</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+<!-- =======================
+Titles END -->
+
+<!-- =======================
+Cab list START -->
+<section class="pt-0">
+	<div class="container" data-sticky-container>
+		<div class="row">
+
+
+
+			<!-- Main content START -->
+			<div class="col-xl-4 col-xxl-12">
+				<div class="vstack gap-4">
+
+
+
+					<!-- Cab item START -->
+					<div class="card border p-4">
+						<!-- Card body START -->
+						<div class="card-body p-0">
+							<div class="row g-2 g-sm-4 mb-4">
+								<!-- Card image -->
+								<div class="col-md-4 col-xl-3">
+									<div class="bg-light rounded-3 px-4 py-5">
+										<img src="{% static 'assets/images/category/cab/suv.svg' %}" alt="">
+									</div>
+								</div>
+
+								<!-- Card title and rating -->
+								<div class="col-sm-6 col-md-4 col-xl-6">
+									<h4 class="card-title mb-2">WagonR OR Similar</h4>
+
+									<!-- Nav divider -->
+									<ul class="nav nav-divider h6 fw-normal mb-2">
+										<li class="nav-item">Hatchback</li>
+										<li class="nav-item">AC</li>
+										<li class="nav-item">4 Seats</li>
+									</ul>
+
+									<!-- Rating Star -->
+									<ul class="list-inline mb-0">
+										<li class="list-inline-item h6 fw-normal me-1 mb-0">4.5</li>
+										<li class="list-inline-item me-0"><i class="fa-solid fa-star text-warning"></i></li>
+										<li class="list-inline-item me-0"><i class="fa-solid fa-star text-warning"></i></li>
+										<li class="list-inline-item me-0"><i class="fa-solid fa-star text-warning"></i></li>
+										<li class="list-inline-item me-0"><i class="fa-solid fa-star text-warning"></i></li>
+										<li class="list-inline-item"><i class="fa-solid fa-star-half-alt text-warning"></i></li>
+									</ul>
+								</div>
+
+
+								<!-- Button -->
+								<div class="col-sm-6 col-md-4 col-xl-3 text-sm-end">
+									<!-- Discount -->
+									<p class="text-danger mb-0">15% Off</p>
+									<!-- Price -->
+									<ul class="list-inline mb-1">
+										<li class="list-inline-item text-decoration-line-through me-1">₹ {{ dis_fare1 }} {{local_fare}}</li>
+										<li class="list-inline-item h5 mb-0">₹ {{ total_fare1 }}</li>
+									</ul>
+                                <form method="post" action="{% url 'cab-detail' %}">
+                                     {% csrf_token %}
+									<input type="hidden" name="car1" value="WagonR OR Similar">
+									<input type="hidden" name="car_type1" value="Hatchback">
+									<input type="hidden" name="seat1" value="4 Seat">
+									<input type="hidden" name="base1" value="{{ base_fare1 }}">
+									<input type="hidden" name="gst1" value="{{ gst1 }}">
+									<input type="hidden" name="total1" value="{{ total_fare1 }}">
+									<input type="hidden" name="form_identifier" value="form1">
+									<button type="submit" class="btn btn-dark mb-0">Select</button>
+								</form>
+                                    <ul class="list-inline mb-1">
+										<a data-bs-toggle="modal" href="#staticBackdrop"><u> Fare Summary</u></a>
+									</ul>
+								</div>
+
+
+
+								<!-- Modal -->
+
+		<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+         <div class="modal-content">
+       <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel" align="center">Fare Summary</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+		<div class="">
+			<div>
+				<ul style="list-style:none; padding:0;">
+					<li><h6>Fare Breakup:</h6></li>
+					<li>Estimated Amount <span style="float:right;">₹ {{base_fare1}}</span></li>
+					<li>Covered Kms <span style="float:right;">{{distance}} Km</span></li>
+					<li>GST (5%) <span style="float:right;">₹ {{gst1|floatformat:"0"}}</span></li>
+					<li>Total Cost <span style="float:right;">₹ {{total_fare1}}</span></li>
+				</ul>
+
+					<h6>Additional Charges ( If any ):</h6>
+				<ul>
+					<li>Usable Oneway Limit {{distance}} Kms</li>
+					<li>After {{distance}} Kms Extra Charges ₹. 0 Per KM</li>
+				</ul>
+			</div>
+			<div>
+
+				    <h6>Inclusion :</h6>
+				<ul>
+					<li>Driver, Vehicle and Fuel</li>
+					<li>Toll Tax,State Tax, Driver Food & Stay charge</li>
+				</ul>
+
+					<h6>Exclusion :</h6>
+				<ul>
+					<li>Parking Charge, Airport Parking Charge</li>
+
+				</ul>
+
+					<h6>Notes :</h6>
+				<ul>
+					<li>Kms & Timing will be charged from customer location</li>
+					<li>Car shall not be used for local use in (City) after completion of one way duty.</li>
+					<li>In case of Booking wil be Cancelled then inform to us before 24 Hrs in then Pickup Time</li>
+					<li>Toll Tax, Inter State Tax Are Included</li>
+				</ul>
+			</div>
+
+        </div>
+	  </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+							</div> <!-- Row END -->
+						</div>
+						<!-- Card body END -->
+
+						<!-- Card footer START -->
+
+					</div>
+					<!-- Cab item END -->
+
+
+
+<!-- Cab item START -->
+					<div class="card border p-4">
+						<!-- Card body START -->
+						<div class="card-body p-0">
+							<div class="row g-2 g-sm-4 mb-4">
+								<!-- Card image -->
+								<div class="col-md-4 col-xl-3">
+									<div class="bg-light rounded-3 px-4 py-5">
+										<img src="{% static 'assets/images/category/cab/seadan.svg' %}" alt="">
+									</div>
+								</div>
+
+								<!-- Card title and rating -->
+								<div class="col-sm-6 col-md-4 col-xl-6">
+									<h4 class="card-title mb-2">Dzire OR Similar</h4>
+
+									<!-- Nav divider -->
+									<ul class="nav nav-divider h6 fw-normal mb-2">
+										<li class="nav-item">Sedan</li>
+										<li class="nav-item">AC</li>
+										<li class="nav-item">4 Seats</li>
+									</ul>
+
+									<!-- Rating Star -->
+									<ul class="list-inline mb-0">
+										<li class="list-inline-item h6 fw-normal me-1 mb-0">4.5</li>
+										<li class="list-inline-item me-0"><i class="fa-solid fa-star text-warning"></i></li>
+										<li class="list-inline-item me-0"><i class="fa-solid fa-star text-warning"></i></li>
+										<li class="list-inline-item me-0"><i class="fa-solid fa-star text-warning"></i></li>
+										<li class="list-inline-item me-0"><i class="fa-solid fa-star text-warning"></i></li>
+										<li class="list-inline-item"><i class="fa-solid fa-star-half-alt text-warning"></i></li>
+									</ul>
+								</div>
+
+
+								<!-- Button -->
+								<div class="col-sm-6 col-md-4 col-xl-3 text-sm-end">
+									<!-- Discount -->
+									<p class="text-danger mb-0">15% Off</p>
+									<!-- Price -->
+									<ul class="list-inline mb-1">
+										<li class="list-inline-item text-decoration-line-through me-1">₹ {{ dis_fare2 }}</li>
+										<li class="list-inline-item h5 mb-0">₹ {{ total_fare2 }}</li>
+									</ul>
+								<form method="post" action="{% url 'cab-detail' %}">
+									{% csrf_token %}
+									<input type="hidden" name="car2" value="Dzire OR Similar">
+									<input type="hidden" name="car_type2" value="Sedan">
+									<input type="hidden" name="seat2" value="4 Seat">
+									<input type="hidden" name="base2" value="{{ base_fare2 }}">
+									<input type="hidden" name="gst2" value="{{ gst2 }}">
+									<input type="hidden" name="total2" value="{{ total_fare2 }}">
+									<input type="hidden" name="form_identifier" value="form2">
+									<button type="submit" class="btn btn-dark mb-0">Select</button>
+								</form>
+                                    <ul class="list-inline mb-1">
+										<a data-bs-toggle="modal" href="#staticBackdrop2"><u> Fare Summary</u></a>
+									</ul>
+								</div>
+
+
+
+								<!-- Modal -->
+
+		<div class="modal fade" id="staticBackdrop2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel2" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+         <div class="modal-content">
+       <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel2" align="center">Fare Summary</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+		<div class="">
+			<div>
+				<ul style="list-style:none; padding:0;">
+					<li><h6>Fare Breakup:</h6></li>
+					<li>Estimated Amount <span style="float:right;">₹ {{base_fare2}}</span></li>
+					<li>Covered Kms <span style="float:right;">{{distance}} Km</span></li>
+					<li>GST (5%) <span style="float:right;">₹ {{gst2|floatformat:"0"}}</span></li>
+					<li>Total Cost <span style="float:right;">₹ {{total_fare2}}</span></li>
+				</ul>
+
+					<h6>Additional Charges ( If any ):</h6>
+				<ul>
+					<li>Usable Oneway Limit {{distance}} Kms</li>
+					<li>After {{distance}} Kms Extra Charges ₹. 0 Per KM</li>
+				</ul>
+			</div>
+			<div>
+
+				    <h6>Inclusion :</h6>
+				<ul>
+					<li>Driver, Vehicle and Fuel</li>
+					<li>Toll Tax,State Tax, Driver Food & Stay charge</li>
+				</ul>
+
+					<h6>Exclusion :</h6>
+				<ul>
+					<li>Parking Charge, Airport Parking Charge</li>
+
+				</ul>
+
+					<h6>Notes :</h6>
+				<ul>
+					<li>Kms & Timing will be charged from customer location</li>
+					<li>Car shall not be used for local use in (City) after completion of one way duty.</li>
+					<li>In case of Booking wil be Cancelled then inform to us before 24 Hrs in then Pickup Time</li>
+					<li>Toll Tax, Inter State Tax Are Included</li>
+				</ul>
+			</div>
+
+        </div>
+	  </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+							</div> <!-- Row END -->
+						</div>
+						<!-- Card body END -->
+
+						<!-- Card footer START -->
+
+					</div>
+					<!-- Cab item END -->
+
+
+
+
+
+
+
+<!-- Cab item START -->
+					<div class="card border p-4">
+						<!-- Card body START -->
+						<div class="card-body p-0">
+							<div class="row g-2 g-sm-4 mb-4">
+								<!-- Card image -->
+								<div class="col-md-4 col-xl-3">
+									<div class="bg-light rounded-3 px-4 py-5">
+										<img src="{% static 'assets/images/category/cab/suv-2.svg' %}" alt="">
+									</div>
+								</div>
+
+								<!-- Card title and rating -->
+								<div class="col-sm-6 col-md-4 col-xl-6">
+									<h4 class="card-title mb-2">Ertiga, Xylo OR Similar</h4>
+
+									<!-- Nav divider -->
+									<ul class="nav nav-divider h6 fw-normal mb-2">
+										<li class="nav-item">SUV</li>
+										<li class="nav-item">AC</li>
+										<li class="nav-item">6 Seats</li>
+									</ul>
+
+									<!-- Rating Star -->
+									<ul class="list-inline mb-0">
+										<li class="list-inline-item h6 fw-normal me-1 mb-0">4.5</li>
+										<li class="list-inline-item me-0"><i class="fa-solid fa-star text-warning"></i></li>
+										<li class="list-inline-item me-0"><i class="fa-solid fa-star text-warning"></i></li>
+										<li class="list-inline-item me-0"><i class="fa-solid fa-star text-warning"></i></li>
+										<li class="list-inline-item me-0"><i class="fa-solid fa-star text-warning"></i></li>
+										<li class="list-inline-item"><i class="fa-solid fa-star-half-alt text-warning"></i></li>
+									</ul>
+								</div>
+
+
+								<!-- Button -->
+								<div class="col-sm-6 col-md-4 col-xl-3 text-sm-end">
+									<!-- Discount -->
+									<p class="text-danger mb-0">15% Off</p>
+									<!-- Price -->
+									<ul class="list-inline mb-1">
+										<li class="list-inline-item text-decoration-line-through me-1">₹ {{ dis_fare3 }}</li>
+										<li class="list-inline-item h5 mb-0">₹ {{ total_fare3 }}</li>
+									</ul>
+
+								<form method="post" action="{% url 'cab-detail' %}">
+									{% csrf_token %}
+                                    <input type="hidden" name="car3" value="Ertiga, Xylo OR Similar">
+									<input type="hidden" name="car_type3" value="SUV">
+									<input type="hidden" name="seat3" value="6 Seat">
+									<input type="hidden" name="base3" value="{{ base_fare3 }}">
+									<input type="hidden" name="gst3" value="{{ gst3 }}">
+									<input type="hidden" name="total3" value="{{ total_fare3 }}">
+									<input type="hidden" name="form_identifier" value="form3">
+									<button type="submit" class="btn btn-dark mb-0">Select</button>
+								</form>
+                                    <ul class="list-inline mb-1">
+										<a data-bs-toggle="modal" href="#staticBackdrop3"><u> Fare Summary</u></a>
+									</ul>
+								</div>
+
+
+
+								<!-- Modal -->
+
+		<div class="modal fade" id="staticBackdrop3" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel3" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+         <div class="modal-content">
+       <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel3" align="center">Fare Summary</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+		<div class="">
+			<div>
+				<ul style="list-style:none; padding:0;">
+					<li><h6>Fare Breakup:</h6></li>
+					<li>Estimated Amount <span style="float:right;">₹ {{base_fare3}}</span></li>
+					<li>Covered Kms <span style="float:right;">{{distance}} Km</span></li>
+					<li>GST (5%) <span style="float:right;">₹ {{gst3|floatformat:"0"}}</span></li>
+					<li>Total Cost <span style="float:right;">₹ {{total_fare3}}</span></li>
+				</ul>
+
+					<h6>Additional Charges ( If any ):</h6>
+				<ul>
+					<li>Usable Oneway Limit {{distance}} Kms</li>
+					<li>After {{distance}} Kms Extra Charges ₹. 0 Per KM</li>
+				</ul>
+			</div>
+			<div>
+
+				    <h6>Inclusion :</h6>
+				<ul>
+					<li>Driver, Vehicle and Fuel</li>
+					<li>Toll Tax,State Tax, Driver Food & Stay charge</li>
+				</ul>
+
+					<h6>Exclusion :</h6>
+				<ul>
+					<li>Parking Charge, Airport Parking Charge</li>
+
+				</ul>
+
+					<h6>Notes :</h6>
+				<ul>
+					<li>Kms & Timing will be charged from customer location</li>
+					<li>Car shall not be used for local use in (City) after completion of one way duty.</li>
+					<li>In case of Booking wil be Cancelled then inform to us before 24 Hrs in then Pickup Time</li>
+					<li>Toll Tax, Inter State Tax Are Included</li>
+				</ul>
+			</div>
+
+        </div>
+	  </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+							</div> <!-- Row END -->
+						</div>
+						<!-- Card body END -->
+
+						<!-- Card footer START -->
+
+					</div>
+					<!-- Cab item END -->
+
+
+
+
+
+
+<!-- Cab item START -->
+					<div class="card border p-4">
+						<!-- Card body START -->
+						<div class="card-body p-0">
+							<div class="row g-2 g-sm-4 mb-4">
+								<!-- Card image -->
+								<div class="col-md-4 col-xl-3">
+									<div class="bg-light rounded-3 px-4 py-5">
+										<img src="{% static 'assets/images/category/cab/suv-2.svg' %}" alt="">
+									</div>
+								</div>
+
+								<!-- Card title and rating -->
+								<div class="col-sm-6 col-md-4 col-xl-6">
+									<h4 class="card-title mb-2">Innova Crysta</h4>
+
+									<!-- Nav divider -->
+									<ul class="nav nav-divider h6 fw-normal mb-2">
+										<li class="nav-item">Assured</li>
+										<li class="nav-item">AC</li>
+										<li class="nav-item">7 Seats</li>
+									</ul>
+
+									<!-- Rating Star -->
+									<ul class="list-inline mb-0">
+										<li class="list-inline-item h6 fw-normal me-1 mb-0">4.5</li>
+										<li class="list-inline-item me-0"><i class="fa-solid fa-star text-warning"></i></li>
+										<li class="list-inline-item me-0"><i class="fa-solid fa-star text-warning"></i></li>
+										<li class="list-inline-item me-0"><i class="fa-solid fa-star text-warning"></i></li>
+										<li class="list-inline-item me-0"><i class="fa-solid fa-star text-warning"></i></li>
+										<li class="list-inline-item"><i class="fa-solid fa-star-half-alt text-warning"></i></li>
+									</ul>
+								</div>
+
+
+								<!-- Button -->
+								<div class="col-sm-6 col-md-4 col-xl-3 text-sm-end">
+									<!-- Discount -->
+									<p class="text-danger mb-0">15% Off</p>
+									<!-- Price -->
+									<ul class="list-inline mb-1">
+										<li class="list-inline-item text-decoration-line-through me-1">₹ {{ dis_fare4 }}</li>
+										<li class="list-inline-item h5 mb-0">₹ {{ total_fare4 }}</li>
+									</ul>
+								<form method="post" action="{% url 'cab-detail' %}">
+									{% csrf_token %}
+									<input type="hidden" name="car4" value="Innova Crysta">
+									<input type="hidden" name="car_type4" value="Assured">
+									<input type="hidden" name="seat4" value="7 Seat">
+									<input type="hidden" name="base4" value="{{ base_fare4 }}">
+									<input type="hidden" name="gst4" value="{{ gst4 }}">
+									<input type="hidden" name="total4" value="{{ total_fare4 }}">
+									<input type="hidden" name="form_identifier" value="form4">
+									<button type="submit" class="btn btn-dark mb-0">Select</button>
+								</form>
+                                    <ul class="list-inline mb-1">
+										<a data-bs-toggle="modal" href="#staticBackdrop4"><u> Fare Summary</u></a>
+									</ul>
+								</div>
+
+
+
+								<!-- Modal -->
+
+		<div class="modal fade" id="staticBackdrop4" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel4" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+         <div class="modal-content">
+       <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel4" align="center">Fare Summary</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+		<div class="">
+			<div>
+				<ul style="list-style:none; padding:0;">
+					<li><h6>Fare Breakup:</h6></li>
+					<li>Estimated Amount <span style="float:right;">₹ {{base_fare4}}</span></li>
+					<li>Covered Kms <span style="float:right;">{{distance}} Km</span></li>
+					<li>GST (5%) <span style="float:right;">₹ {{gst4|floatformat:"0"}}</span></li>
+					<li>Total Cost <span style="float:right;">₹ {{total_fare4}}</span></li>
+				</ul>
+
+					<h6>Additional Charges ( If any ):</h6>
+				<ul>
+					<li>Usable Oneway Limit {{distance}} Kms</li>
+					<li>After {{distance}} Kms Extra Charges ₹. 0 Per KM</li>
+				</ul>
+			</div>
+			<div>
+
+				    <h6>Inclusion :</h6>
+				<ul>
+					<li>Driver, Vehicle and Fuel</li>
+					<li>Toll Tax,State Tax, Driver Food & Stay charge</li>
+				</ul>
+
+					<h6>Exclusion :</h6>
+				<ul>
+					<li>Parking Charge, Airport Parking Charge</li>
+
+				</ul>
+
+					<h6>Notes :</h6>
+				<ul>
+					<li>Kms & Timing will be charged from customer location</li>
+					<li>Car shall not be used for local use in (City) after completion of one way duty.</li>
+					<li>In case of Booking wil be Cancelled then inform to us before 24 Hrs in then Pickup Time</li>
+					<li>Toll Tax, Inter State Tax Are Included</li>
+				</ul>
+			</div>
+
+        </div>
+	  </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+							</div> <!-- Row END -->
+						</div>
+						<!-- Card body END -->
+
+						<!-- Card footer START -->
+
+					</div>
+					<!-- Cab item END -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+					<!-- Pagination -->
+
+				</div>
+			</div>
+			<!-- Main content END -->
+
+		</div> <!-- Row END -->
+
+	</div>
+</section>
+<!-- =======================
+Cab list END -->
+
+
+
+{% endblock %}
